@@ -1,84 +1,65 @@
 # Contextual-Gaussian-Process-Bandit-Optimization
 
-One Paragraph of project description goes here
+A straightforward implementation of the CGP-UCB algorithm.[1] CGP-UCB is an intuitive upper-confidence style algorithm, in which the payoff function is modeled as a sample from a Gaussian process defined over joint action-context space. It is shown that by mixing and matching kernels for contexts and actions, CGP-UCB can handle a variety of practical applications.[2]
 
-## Getting Started
+## Dependencies
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
+You need to have the following libraries.
 ```
-Give examples
+GPy
+matplotlib
+numpy
 ```
+## How to Run
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
+### Define your Input Space
+```python
+# create a set of actions and contexts
+actions = np.arange(-3, 3.25, 0.25)
+contexts = np.arange(-3, 3.25, 0.25)
+# create action-context pairs via a meshgrid.
+input_space = np.meshgrid(actions, contexts)
 ```
 
-And repeat
-
+### Create an Environment
+```python
+environment = DummyEnvironment()
 ```
-until finished
+
+### Create a Kernel
+Define a kernel using GPy Kernels or you can create one for yourself.
+[Jupyter Tutorial on GPy Kernels](http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
+[GPy Documentation](https://gpy.readthedocs.io/en/deploy/index.html)
+```python
+# works on the first dim. of input_space, index=0
+kernel1 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[0])
+# works on the second dim. of input_space, index=1
+kernel2 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[1])
+# composite kernel by additive combination
+kernel = kernel1 + kernel2
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+### Initialize and Run
+```python
+# initialize CGP-UCB
+agent = CGPUCB(input_space=input_space, sample_from_environment=environment.sample_noisy, kernel=kernel)
+# run for 100 rounds
+rounds = 100
+  for i in range(rounds):
+    agent.learn()
+```
 
-## Running the tests
+## Some Tests and Plots
 
-Explain how to run the automated tests for this system
 
-### Break down into end to end tests
+
+## A few Words about Composite Kernels
 
 Explain what these tests test and why
 
 ```
 Give an example
 ```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
