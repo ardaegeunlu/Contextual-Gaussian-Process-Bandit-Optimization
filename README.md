@@ -83,7 +83,7 @@ agent.plot_slices(fixed_dimension=1, slices=[-np.pi/2.0, 0, np.pi/2.0])
 ![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/slices_at_10_rounds.png "Slices")
 
 ### Other Possible Plots
-GPy offers a plethora of plotting options. CGP-UCB.gp attribute can be used to access them. A function builtin_plot utilizes CGP-UCB.gp.plot() function with your choice of kwargs. The following code is used to create the contour plot below after 300 rounds.
+GPy offers a plethora of plotting options. CGP-UCB.gp attribute can be used to access them. The function "builtin_plot()" utilizes CGP-UCB.gp.plot() function with your choice of kwargs. The following code is used to create the contour plot below after 300 rounds.
 ```python
 agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', ylabel='Contexts')
 ```
