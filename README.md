@@ -38,7 +38,8 @@ class DummyEnvironment(object):
 
 ### Create a Kernel
 Define a kernel using GPy Kernels or you can create one for yourself.
-[Jupyter Tutorial on GPy Kernels(http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
+[Jupyter Tutorial on GPy Kernels]
+(http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
 [GPy Documentation](https://gpy.readthedocs.io/en/deploy/index.html)
 ```python
 # works on the first dim. of input_space, index=0
@@ -90,10 +91,17 @@ agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', 
 ![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/contour_300.png "Contour")
 
 ## A few Words about Composite Kernels
+### Additive Kernel
+An alternative is to consider the additive combination (kS ⊕ kZ) of kernels. The intuition behind this construction is that a GP with additive kernel can be understood as a generative model, which first samples a function fS(s, z) that is constant along z, and various along s with regularity as expressed by ks; it then samples a function fz(s, z), which varies along z and is constant along s; then f = fs + fz. Thus, the fz component models overall trends according to the context (e.g., encoding assumptions about similarity within clusters of contexts), and the fS models action-specific deviation from this trend.[3]
+### Product Kernel
+The intuition behind this product kernel is a conjunction of the notions of similarities induced by the kernels over context and action spaces: Two context-action pairs are similar (large correlation) if the contexts are similar and actions are similar. Note that many kernel functions used in practice are already in product form. For example, if kZ and kS are squared
+exponential kernels, then the product k = kZ ⊗ kS is a squared exponential kernel.[4]
 
 
 ## Acknowledgments
+### Reference
+[1,2,3,4] Krause, A., Ong, C.S. (2011). Contextual Gaussian Process Bandit Optimization. Advances in Neural Information Processing Systems 24 (NIPS 2011), pp.2447-2455.
+### Also check for implementation
+Srinivas, N., Krause, A., Kakade, S. and Seeger, M. (2012). Information-Theoretic Regret Bounds for Gaussian Process Optimization in the Bandit Setting. IEEE Transactions on Information Theory, 58(5), pp.3250-3265.
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Thanks to https://github.com/tushuhei/gpucb for initial template on GP-UCB.
