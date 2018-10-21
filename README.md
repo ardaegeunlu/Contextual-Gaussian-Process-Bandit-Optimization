@@ -91,7 +91,7 @@ GPy offers a plethora of plotting options. CGP-UCB.gp attribute can be used to a
 agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', ylabel='Contexts')
 ```
 Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Contour")
+![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/contour_300.png "Contour")
 
 ## A few Words about Composite Kernels
 
