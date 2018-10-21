@@ -30,8 +30,8 @@ environment = DummyEnvironment()
 
 ### Create a Kernel
 Define a kernel using GPy Kernels or you can create one for yourself.
-[Jupyter Tutorial on GPy Kernels](http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
-
+[Jupyter Tutorial on GPy Kernels
+(http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
 [GPy Documentation](https://gpy.readthedocs.io/en/deploy/index.html)
 ```python
 # works on the first dim. of input_space, index=0
