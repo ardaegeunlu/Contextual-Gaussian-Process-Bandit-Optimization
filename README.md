@@ -27,11 +27,18 @@ input_space = np.meshgrid(actions, contexts)
 ```python
 environment = DummyEnvironment()
 ```
+DummyEnvironment used for testing is given below.
+```python
+class DummyEnvironment(object):
+  def sample(self, x):
+    return np.sin(x[0]) + np.cos(x[1])
+  def sample_noisy(self, x):
+    return [self.sample(x) + np.random.normal(loc=0.0, scale=0.02)]
+```
 
 ### Create a Kernel
 Define a kernel using GPy Kernels or you can create one for yourself.
-[Jupyter Tutorial on GPy Kernels
-(http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
+[Jupyter Tutorial on GPy Kernels(http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
 [GPy Documentation](https://gpy.readthedocs.io/en/deploy/index.html)
 ```python
 # works on the first dim. of input_space, index=0
@@ -53,16 +60,41 @@ rounds = 100
 ```
 
 ## Some Tests and Plots
+CGP-UCB is iterated for 300 learning rounds using the DummyEnvironment given above.
 
+### Regret Plot
+You can check the source file to see how the regret is plotted. The sublinear regret shows that the CGP-UCB converges to the best action-context pair.
+Inline-style: 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Regret Plot")
 
+### Wireframe Plot of Mean and Payoff Function
+The following code generates a 3D plot of deduced means at all input-space points and the real environment function.
+```python
+agent.plot_environment_and_mean()
+```
+Inline-style: 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Wireframe1")
+Inline-style: 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Wireframe2")
+
+### Plotting Slices
+You can fix either context or action at some fixed points, here we fix context to [-np.pi/2.0, 0, np.pi/2.0] to produce 3 seperate 2d plots. Following slices are plotted after only 10 rounds of learning.
+```python
+agent.plot_slices(fixed_dimension=1, slices=[-np.pi/2.0, 0, np.pi/2.0])
+```
+Inline-style: 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Slices")
+
+### Other Possible Plots
+GPy offers a plethora of plotting options. CGP-UCB.gp attribute can be used to access them. A function builtin_plot utilizes CGP-UCB.gp.plot() function with your choice of kwargs. The following code is used to create the contour plot below after 300 rounds.
+```python
+agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', ylabel='Contexts')
+```
+Inline-style: 
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Contour")
 
 ## A few Words about Composite Kernels
 
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Acknowledgments
 
