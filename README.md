@@ -1,6 +1,8 @@
 # Contextual-Gaussian-Process-Bandit-Optimization
 
-A straightforward implementation of the CGP-UCB algorithm.[1] CGP-UCB is an intuitive upper-confidence style algorithm, in which the payoff function is modeled as a sample from a Gaussian process defined over joint action-context space. It is shown that by mixing and matching kernels for contexts and actions, CGP-UCB can handle a variety of practical applications.[2]
+A straightforward implementation of the CGP-UCB algorithm.[1] 
+
+CGP-UCB is an intuitive upper-confidence style algorithm, in which the payoff function is modeled as a sample from a Gaussian process defined over joint action-context space. It is shown that by mixing and matching kernels for contexts and actions, CGP-UCB can handle a variety of practical applications.[2]
 
 ## Dependencies
 
@@ -29,6 +31,7 @@ environment = DummyEnvironment()
 ### Create a Kernel
 Define a kernel using GPy Kernels or you can create one for yourself.
 [Jupyter Tutorial on GPy Kernels](http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
+
 [GPy Documentation](https://gpy.readthedocs.io/en/deploy/index.html)
 ```python
 # works on the first dim. of input_space, index=0
