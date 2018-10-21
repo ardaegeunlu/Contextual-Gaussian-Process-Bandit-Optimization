@@ -38,8 +38,7 @@ class DummyEnvironment(object):
 
 ### Create a Kernel
 Define a kernel using GPy Kernels or you can create one for yourself.
-[Jupyter Tutorial on GPy Kernels]
-(http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
+[Jupyter Tutorial on GPy Kernels](http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb)
 [GPy Documentation](https://gpy.readthedocs.io/en/deploy/index.html)
 ```python
 # works on the first dim. of input_space, index=0
@@ -65,30 +64,30 @@ CGP-UCB is iterated for 300 learning rounds using the DummyEnvironment given abo
 
 ### Regret Plot
 You can check the source file to see how the regret is plotted. The sublinear regret shows that the CGP-UCB converges to the best action-context pair. 
-![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/regret_300.png "Regret Plot")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/regret_300.png "Regret Plot")
 
 ### Wireframe Plot of Mean and Payoff Function
 The following code generates a 3D plot of deduced means at all input-space points and the real environment function.
 ```python
 agent.plot_environment_and_mean()
 ``` 
-![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_at_100_rounds.png "Wireframe1")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_at_100_rounds.png "Wireframe1")
 
-![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_2.png "Wireframe2")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_2.png "Wireframe2")
 
 ### Plotting Slices
 You can fix either context or action at some fixed points, here we fix context to [-np.pi/2.0, 0, np.pi/2.0] to produce 3 seperate 2d plots. Following slices are plotted after only 10 rounds of learning.
 ```python
 agent.plot_slices(fixed_dimension=1, slices=[-np.pi/2.0, 0, np.pi/2.0])
 ```
-![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/slices_at_10_rounds.png "Slices")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/slices_at_10_rounds.png "Slices")
 
 ### Other Possible Plots
 GPy offers a plethora of plotting options. CGP-UCB.gp attribute can be used to access them. A function builtin_plot utilizes CGP-UCB.gp.plot() function with your choice of kwargs. The following code is used to create the contour plot below after 300 rounds.
 ```python
 agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', ylabel='Contexts')
 ```
-![alt text](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/contour_300.png "Contour")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/contour_300.png "Contour")
 
 ## A few Words about Composite Kernels
 ### Additive Kernel
