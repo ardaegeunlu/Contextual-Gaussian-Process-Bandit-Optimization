@@ -67,7 +67,7 @@ You can check the source file to see how the regret is plotted. The sublinear re
 ![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/regret_300.png "Regret Plot")
 
 ### Wireframe Plot of Mean and Payoff Function
-The following code generates a 3D plot of deduced means at all input-space points and the real environment function.
+The following code generates a 3D plot of deduced means at all input-space points and the real environment function. The plots were generated after 100 rounds.
 ```python
 agent.plot_environment_and_mean()
 ``` 
