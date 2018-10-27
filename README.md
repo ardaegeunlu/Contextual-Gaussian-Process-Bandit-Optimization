@@ -65,26 +65,29 @@ for i in range(rounds):
 
 ## Some Tests and Plots
 CGP-UCB is iterated for 300 learning rounds using the DummyEnvironment given above.
-
 ### Regret Plot
-You can check the source file to see how the regret is plotted. The sublinear regret shows that the CGP-UCB converges to the best action-context pair. 
+The following code plots the regret. Note that plot_regret is not a part of the CGP-UCB class.
+```python
+plot_regret(best=best_strategy_rewards, agent=np.array(agent.Y))
+```
+The sublinear regret shows that the CGP-UCB converges to the best action-context pair. 
 ![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/regret_300.png "Regret Plot")
 
 ### Wireframe Plot of Mean and Payoff Function
-The following code generates a 3D plot of deduced means at all input-space points and the real environment function. The plots were generated after 100 rounds.
+The following code generates a 3D plot of deduced means at all input-space points and the real environment function. 
 ```python
 agent.plot_environment_and_mean()
 ``` 
-![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_at_100_rounds.png "Wireframe1")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_300_1.png "Wireframe1")
 
-![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_2.png "Wireframe2")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/wireframe_300_2.png "Wireframe2")
 
 ### Plotting Slices
-You can fix either context or action at some fixed points, here we fix context to [-np.pi/2.0, 0, np.pi/2.0] to produce 3 seperate 2d plots. Following slices are plotted after only 10 rounds of learning.
+You can fix either context or action at some fixed points, here we fix context to [-np.pi/2.0, 0, np.pi/2.0] to produce 3 seperate 2d plots. 
 ```python
 agent.plot_slices(fixed_dimension=1, slices=[-np.pi/2.0, 0, np.pi/2.0])
 ```
-![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/slices_at_10_rounds.png "Slices")
+![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/slices_300.png "Slices")
 
 ### Other Possible Plots
 GPy offers a plethora of plotting options. CGP-UCB.gp attribute can be used to access them. The function "builtin_plot()" utilizes CGP-UCB.gp.plot() function with your choice of kwargs. The following code is used to create the contour plot below after 300 rounds.
