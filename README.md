@@ -68,7 +68,7 @@ CGP-UCB is iterated for 300 learning rounds using the DummyEnvironment given abo
 ### Regret Plot
 The following code plots the regret. Note that plot_regret is not a part of the CGP-UCB class.
 ```python
-plot_regret(best=best_strategy_rewards, agent=np.array(agent.Y))
+plot_regret(best=best_strategy_rewards, agent=agent.Y)
 ```
 The sublinear regret shows that the CGP-UCB converges to the best action-context pair. 
 ![](https://github.com/ardaegeunlu/Contextual-Gaussian-Process-Bandit-Optimization/blob/master/plots/regret_300.png "Regret Plot")
