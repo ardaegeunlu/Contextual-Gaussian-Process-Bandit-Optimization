@@ -17,9 +17,10 @@ class CGPUCB(object):
   def __init__(self, actions, contexts, sample_from_environment, kernel, delta=0.80):
 
     """
-    :param input_space: The input space of possible values that can be played. Feed this as a meshgrid and
-    let dimension=0 be actions and dimension=1 be contexts.
+    :param actions: array of actions.
+    :param contexts: array of contexts.
     :param sample_from_environment: sampling function which returns observed value.
+    :param kernel: define a kernel using GPy Kernels or you can create one for yourself.
     :param delta: delta needs to be in interval (0,1) exclusively. Delta is a hyper-parameter that is used to choose
     beta, where beta decides the trade-off between exploitation and exploration. A higher beta means more exploration,
     and a smaller beta results in greedier choices. Delta and beta are inversely correlated.
@@ -56,7 +57,8 @@ class CGPUCB(object):
     """
     this point selection strategy combines a greedy of choice of choosing a point with high mu, together with
     an exploratory choice of choosing a point with high variance; achieving a balance of exploration & exploitation.
-    :return: next point to be sampled.
+    :param context_index: index of the context you are referring to.
+    :return:  next point to be sampled.
     """
 
     # deduce the indices of the actions for the given context.
@@ -144,6 +146,7 @@ class CGPUCB(object):
     by specifying the fixed dimension and what values you would like to fix it to.
     :param fixed_dimension: 0 or 1.
     :param slices: The value or an array-like values which fixed_dimension will be fixed to.
+    :param density: Whether to plot density, boolean.
     :return:
     """
     if fixed_dimension is 0:
@@ -237,7 +240,7 @@ if __name__ == '__main__':
   kernel1 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[0])
   # works on the second dim. of input_space, index=1
   kernel2 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[1])
-  # composite kernel by additive combination
+  # composite kernel by multiplication
   kernel = kernel1 * kernel2
 
   # initialize CGP-UCB
@@ -262,6 +265,3 @@ if __name__ == '__main__':
 
   plot_regret(best=best_strategy_rewards, agent=np.array(agent.Y))
   plt.show(block=True)
-
-
-
