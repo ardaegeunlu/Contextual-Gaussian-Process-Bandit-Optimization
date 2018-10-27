@@ -14,24 +14,30 @@ For more details about the algorithm please check the following papers.
 
 class CGPUCB(object):
 
-  def __init__(self, input_space, sample_from_environment, kernel, delta=0.80):
+  def __init__(self, actions, contexts, sample_from_environment, kernel, delta=0.80):
 
     """
-    :param input_space: The input space of possible values that can be played.
+    :param input_space: The input space of possible values that can be played. Feed this as a meshgrid and
+    let dimension=0 be actions and dimension=1 be contexts.
     :param sample_from_environment: sampling function which returns observed value.
     :param delta: delta needs to be in interval (0,1) exclusively. Delta is a hyper-parameter that is used to choose
     beta, where beta decides the trade-off between exploitation and exploration. A higher beta means more exploration,
     and a smaller beta results in greedier choices. Delta and beta are inversely correlated.
     """
-    self.input_mesh = np.array(input_space)
+    # create action-context pairs via a meshgrid.
+    self.input_mesh = np.array(np.meshgrid(actions, contexts))
+    # number of actions in each context. currently only supports equal number of actions for each context.
+    self.number_of_actions_in_each_context = np.size(self.input_mesh, 2)
+
     self.sample_from_environment = sample_from_environment
     self.beta = None
     self.delta = delta
 
     self.input_space = self.input_mesh.reshape(self.input_mesh.shape[0], -1).T
     self.input_space_size = self.input_space.size
+
     self.mu = np.array([0. for _ in range(self.input_space.shape[0])])
-    self.sigma = np.array([0.5 for _ in range(self.input_space.shape[0])])
+    self.sigma = np.array([.5 for _ in range(self.input_space.shape[0])])
 
     if kernel is None:
       # default kernel
@@ -44,33 +50,49 @@ class CGPUCB(object):
     self.X = []
     self.Y = []
     self.round = 1
+    return
 
-  def cgp_ucb_rule(self):
+  def cgp_ucb_rule(self, context_index):
     """
     this point selection strategy combines a greedy of choice of choosing a point with high mu, together with
     an exploratory choice of choosing a point with high variance; achieving a balance of exploration & exploitation.
     :return: next point to be sampled.
     """
-    return np.argmax(self.mu + self.sigma * np.sqrt(self.beta))
 
-  def learn(self):
+    # deduce the indices of the actions for the given context.
+    context = int(context_index)
+    lower_bound_on_actions = context*self.number_of_actions_in_each_context
+    upper_bound_on_actions = (context+1)*self.number_of_actions_in_each_context
+
+    # point selection rule
+    return lower_bound_on_actions + np.argmax(
+      self.mu[lower_bound_on_actions:upper_bound_on_actions] +
+      self.sigma[lower_bound_on_actions:upper_bound_on_actions] * np.sqrt(self.beta))
+
+  def learn(self, context_index):
     """
     1 iteration of the learning algorithm. Iterate this for T rounds of your choice.
+    :param context_index: index of the context you are referring to.
     :return:
     """
     # choose optimal beta.
     self.beta = self.optimal_beta_selection(self.round, self.input_space_size, self.delta)
-    # choose new sampling point using cgp-ucb.
-    grid_idx = self.cgp_ucb_rule()
+
+    # choose new sampling point using cgp-ucb for the given context.
+    grid_idx = self.cgp_ucb_rule(context_index)
     self.sample(self.input_space[grid_idx])
+
     # fit the data to a gaussian process.
     self.gp = GPy.models.GPRegression(np.array(self.X), np.array(self.Y), self.kernel)
     self.gp.optimize(messages=False)
+
     # get mu and sigma predictions.
     self.mu, variances = self.gp.predict(self.input_space)
     self.sigma = np.sqrt(variances)
+
     # increment round #.
     self.round += 1
+    return
 
   def sample(self, x):
     """
@@ -80,6 +102,7 @@ class CGPUCB(object):
     y = self.sample_from_environment(x)
     self.X.append(x)
     self.Y.append(y)
+    return
 
   def builtin_plot(self, **kwargs):
     """
@@ -88,6 +111,7 @@ class CGPUCB(object):
     :return:
     """
     self.gp.plot(**kwargs)
+    return
 
   def plot_environment_and_mean(self):
     """
@@ -112,6 +136,7 @@ class CGPUCB(object):
     ax.scatter([x[0] for x in self.X], [x[1] for x in self.X], self.Y, c='r',
                marker='o', alpha=1.0, label='data')
     ax.legend()
+    return
 
   def plot_slices(self, fixed_dimension, slices, density=False):
     """
@@ -133,6 +158,7 @@ class CGPUCB(object):
     for i, y in zip(range(number_of_slices), slices):
       self.gp.plot(figure=figure,plot_density=density, fixed_inputs=[(fixed_dimension, y)], row=(i + 1),
                    plot_data=False, title='slice at %s=%f' % (fixed_dim_name, y), xlabel=xlabel, ylabel='reward')
+    return
 
   def optimal_beta_selection(self, t, input_space_size, delta):
     """
@@ -148,15 +174,25 @@ class CGPUCB(object):
 
 class DummyEnvironment(object):
 
+  def __init__(self, actions, contexts):
+    self.input_mesh = np.array(np.meshgrid(actions, contexts))
+
   def sample(self, x):
     return np.sin(x[0]) + np.cos(x[1])
 
   def sample_noisy(self, x):
     return [self.sample(x) + np.random.normal(loc=0.0, scale=0.02)]
 
-  def find_best_input(self, input_space):
-    return np.argmax(self.sample(input_space))
+  def find_best_input_in_context(self, context_space):
+    return np.argmax(self.sample(context_space))
 
+  def get_best_reward_in_context(self, context_index):
+    context_index = int(context_index)
+    actions_context_pair = np.array(self.input_mesh[:,context_index,:])
+
+    best_action_index = self.find_best_input_in_context(actions_context_pair)
+    best_strategy = self.input_mesh[:,context_index, best_action_index]
+    return self.sample_noisy(best_strategy)[0]
 
 
 def plot_regret(best, agent):
@@ -184,45 +220,47 @@ def plot_regret(best, agent):
 
 if __name__ == '__main__':
 
-  # define input space
+  # create a set of actions and contexts
   actions = np.arange(-3, 3.25, 0.25)
   contexts = np.arange(-3, 3.25, 0.25)
-  # create action-context pairs via a meshgrid.
-  input_space = np.meshgrid(actions, contexts)
 
   # create an environment
-  environment = DummyEnvironment()
+  environment = DummyEnvironment(actions, contexts)
 
   # define a kernel using GPy Kernels or you can create one for yourself.
-  # Jupyter Tutorial on Kernels:
+  # Jupyter Tutorial on GPy Kernels:
   # -> http://nbviewer.jupyter.org/github/SheffieldML/notebook/blob/master/GPy/basic_kernels.ipynb
   # GPy Documentation:
   # -> https://gpy.readthedocs.io/en/deploy/index.html
 
-  # works on the first column of D, index=0
+  # works on the first dim. of input_space, index=0
   kernel1 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[0])
-  # works on the second column of D, index=1
+  # works on the second dim. of input_space, index=1
   kernel2 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[1])
-  # composite kernel
-  kernel = kernel1 + kernel2
+  # composite kernel by additive combination
+  kernel = kernel1 * kernel2
 
   # initialize CGP-UCB
-  agent = CGPUCB(input_space=input_space, sample_from_environment=environment.sample_noisy, kernel=kernel)
+  agent = CGPUCB(actions=actions, contexts=contexts, sample_from_environment=environment.sample_noisy, kernel=kernel)
 
-  rounds = 100
+  rounds = 300
+  context_numbers = contexts.size
+  best_strategy_rewards = []
   for i in range(rounds):
-    if i % 100 == 0:
-      print("@round%d" % (i))
-    agent.learn()
+    # choose a random context.
+    context_index = np.floor(np.random.rand()*context_numbers)
+    # iterate learning algorithm for 1 round.
+    agent.learn(context_index)
+    # get best_strategy's reward for the current context.
+    best_strategy_rewards.append(environment.get_best_reward_in_context(context_index))
+
 
   # print(agent.gp)
   agent.plot_environment_and_mean()
   agent.plot_slices(fixed_dimension=1, slices=[-np.pi/2.0, 0, np.pi/2.0])
   agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', ylabel='Contexts')
 
-
-  best_strategy = agent.input_space[environment.find_best_input(input_space=np.array(input_space))]
-  plot_regret(best=np.full(fill_value=environment.sample(best_strategy), shape=rounds), agent=np.array(agent.Y))
+  plot_regret(best=best_strategy_rewards, agent=np.array(agent.Y))
   plt.show(block=True)
 
 
