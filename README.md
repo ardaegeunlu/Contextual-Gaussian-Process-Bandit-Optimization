@@ -16,11 +16,9 @@ numpy
 
 ### Define your Input Space
 ```python
-# create a set of actions and contexts
+# create arrays of actions and contexts
 actions = np.arange(-3, 3.25, 0.25)
 contexts = np.arange(-3, 3.25, 0.25)
-# create action-context pairs via a meshgrid.
-input_space = np.meshgrid(actions, contexts)
 ```
 
 ### Create an Environment
@@ -45,18 +43,24 @@ Define a kernel using GPy Kernels or you can create one for yourself.
 kernel1 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[0])
 # works on the second dim. of input_space, index=1
 kernel2 = GPy.kern.RBF(input_dim=1, variance=1., lengthscale=1., active_dims=[1])
-# composite kernel by additive combination
-kernel = kernel1 + kernel2
+# composite kernel by the product of two kernels.
+kernel = kernel1 * kernel2
 ```
 
 ### Initialize and Run
 ```python
 # initialize CGP-UCB
-agent = CGPUCB(input_space=input_space, sample_from_environment=environment.sample_noisy, kernel=kernel)
-# run for 100 rounds
-rounds = 100
-  for i in range(rounds):
-    agent.learn()
+agent = CGPUCB(actions=actions, contexts=contexts, sample_from_environment=environment.sample_noisy, kernel=kernel)
+rounds = 300
+number_of_contexts = contexts.size
+best_strategy_rewards = []
+for i in range(rounds):
+  # choose a random context.
+  context_index = np.floor(np.random.rand()*number_of_contexts)
+  # iterate learning algorithm for 1 round.
+  agent.learn(context_index)
+  # save best_strategy's reward for the current context. (Only used to plot regret.)
+  best_strategy_rewards.append(environment.get_best_reward_in_context(context_index))
 ```
 
 ## Some Tests and Plots
