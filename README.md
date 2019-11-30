@@ -1,8 +1,8 @@
 # Contextual-Gaussian-Process-Bandit-Optimization
 
-A straightforward implementation of the CGP-UCB algorithm.[1] 
+A straightforward implementation of the CGP-UCB algorithm [1]. 
 
-CGP-UCB is an intuitive upper-confidence style algorithm, in which the payoff function is modeled as a sample from a Gaussian process defined over joint action-context space. It is shown that by mixing and matching kernels for contexts and actions, CGP-UCB can handle a variety of practical applications.[2]
+CGP-UCB is an intuitive upper-confidence style algorithm, in which the payoff function is modeled as a sample from a Gaussian process defined over joint action-context space. It is shown that by mixing and matching kernels for contexts and actions, CGP-UCB can handle a variety of practical applications [2].
 
 ## Dependencies
 
@@ -98,10 +98,10 @@ agent.builtin_plot(projection='2d', title='GPy Contour Plot', xlabel='Actions', 
 
 ## A few Words about Composite Kernels
 ### Additive Kernel
-An alternative is to consider the additive combination (kS ⊕ kZ) of kernels. The intuition behind this construction is that a GP with additive kernel can be understood as a generative model, which first samples a function fS(s, z) that is constant along z, and various along s with regularity as expressed by ks; it then samples a function fz(s, z), which varies along z and is constant along s; then f = fs + fz. Thus, the fz component models overall trends according to the context (e.g., encoding assumptions about similarity within clusters of contexts), and the fS models action-specific deviation from this trend.[3]
+An alternative is to consider the additive combination (kS ⊕ kZ) of kernels. The intuition behind this construction is that a GP with additive kernel can be understood as a generative model, which first samples a function fS(s, z) that is constant along z, and various along s with regularity as expressed by ks; it then samples a function fz(s, z), which varies along z and is constant along s; then f = fs + fz. Thus, the fz component models overall trends according to the context (e.g., encoding assumptions about similarity within clusters of contexts), and the fS models action-specific deviation from this trend [3].
 ### Product Kernel
 The intuition behind this product kernel is a conjunction of the notions of similarities induced by the kernels over context and action spaces: Two context-action pairs are similar (large correlation) if the contexts are similar and actions are similar. Note that many kernel functions used in practice are already in product form. For example, if kZ and kS are squared
-exponential kernels, then the product k = kZ ⊗ kS is a squared exponential kernel.[4]
+exponential kernels, then the product k = kZ ⊗ kS is a squared exponential kernel [4].
 
 
 ## Acknowledgments
